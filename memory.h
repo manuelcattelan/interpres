@@ -3,59 +3,53 @@
 
 #include "common.h"
 
-/* Here we define a heuristic value for the growth operation of the instructions
- * array. A value of 8 means that 8 will be the minimum number of instructions
- * that we will allocate space for when we need to grow the instructions array.
+/* Here we define a heuristic value for the growth operation of a dynamic array.
+ * A value of 8 means that 8 will be the minimum number of array values that we
+ * will allocate space for when we need to grow the array.
  */
 #define GROWTH_THRESHOLD 8
-/* Here we define the multiplier we will use to extend the capacity of
- * instructions array when we need to grow it. A value of 2 means that we will
- * double the size of the instructions array every time we need to grow it. */
+/* Here we define the multiplier we will use to extend the capacity of dynamic
+ * array when we need to grow it. A value of 2 means that we will double the
+ * size of the array every time we need to grow it. */
 #define GROWTH_FACTOR 2
 
 /*
- * @brief Compute the new capacity of the instructions array before growing it.
- * This macro will return the capacity of the instructions array that has to be
- * allocated in case the current one does not fit any new instructions.
+ * @brief Compute the new capacity of the dynamic array before growing it. This
+ * macro will return the capacity of the dynamic array that has to be allocated
+ * in case the current one does not fit any new values.
  *
- * @param instructions_array_capacity The current capacity of the instructions
- * array
- * @return The new capacity of the instructions array
+ * @param current_capacity The current capacity of the dynamic array
+ * @return The new capacity of the dynamic array
  */
-#define COMPUTE_INSTRUCTIONS_ARRAY_CAPACITY(instructions_array_capacity)       \
-  ((instructions_array_capacity) < GROWTH_THRESHOLD                            \
-       ? GROWTH_THRESHOLD                                                      \
-       : (instructions_array_capacity) * GROWTH_FACTOR)
+#define COMPUTE_ARRAY_CAPACITY(current_capacity)                               \
+  ((current_capacity) < GROWTH_THRESHOLD ? GROWTH_THRESHOLD                    \
+                                         : (current_capacity) * GROWTH_FACTOR)
 /*
- * @brief Wrapper around reallocate_instructions_array function that pretties
- * up getting the size of the instructions array's type and casting the
- * resulting void* back to the pointer of the correct type.
+ * @brief Wrapper around reallocate_array function that pretties up getting the
+ * size of the dynamic array's type and casting the resulting void* back to
+ * the pointer of the correct type.
  *
- * @param instructions_type The type of the instructions array
- * @param instructions The instructions array to reallocate
- * @param old_capacity The old capacity of the instructions array
- * @param new_capacity The new capacity of the instructions array
- * @return The reallocated instructions array
+ * @param array_type The type of the dynamic array's values
+ * @param array The dynamic array to reallocate
+ * @param old_capacity The old capacity of the dynamic array
+ * @param new_capacity The new capacity of the dynamic array
+ * @return The reallocated dynamic array
  */
-#define GROW_INSTRUCTIONS_ARRAY(instructions_type, instructions, old_capacity, \
-                                new_capacity)                                  \
-  (instructions_type *)reallocate_instructions_array(                          \
-      instructions, sizeof(instructions_type) * (old_capacity),                \
-      sizeof(instructions_type) * (new_capacity))
+#define GROW_ARRAY(array_type, array, old_capacity, new_capacity)              \
+  (array_type *)reallocate_array(array, sizeof(array_type) * old_capacity,     \
+                                 sizeof(array_type) * new_capacity)
 /*
- * @brief Wrapper around reallocate_instructions_array function that pretties
- * up freeing the instructions array and re-initializing it to an empty state.
+ * @brief Wrapper around reallocate_array function that pretties up freeing the
+ * dynamic array and re-initializing it to an empty state.
  *
- * @param instructions_type The type of the instructions array
- * @param instructions The instructions array to reallocate
- * @param old_capacity The old capacity of the instructions array
+ * @param array_type The type of the dynamic array's values
+ * @param array The dynamic array to free
+ * @param old_capacity The old capacity of the dynamic array
  * @return void
  */
-#define FREE_INSTRUCTIONS_ARRAY(instructions_type, instructions, old_capacity) \
-  reallocate_instructions_array(instructions,                                  \
-                                sizeof(*instructions) * old_capacity, 0)
+#define FREE_ARRAY(array_type, array, old_capacity)                            \
+  reallocate_array(array, sizeof(array_type) * old_capacity, 0)
 
-void *reallocate_instructions_array(void *instructions, size_t old_capacity,
-                                    size_t new_capacity);
+void *reallocate_array(void *array, size_t old_capacity, size_t new_capacity);
 
 #endif

@@ -2,6 +2,7 @@
 #define interpres_chunk_h
 
 #include "common.h"
+#include "value.h"
 
 /* Each instruction in bytecode format has a one-byte operation code that
  * represents what kind of operation we're dealing with, e.g. adding,
@@ -9,16 +10,16 @@
 typedef enum {
   OP_RETURN,
 } OpCode;
-
 /* Here is the standard implementation of a dynamic array in C. Besides the
  * array of bytes that will hold our instructions, we keep track of the size of
  * the array we have allocated, i.e. the number of elements in the array,
- * "capacity", and the number of allocated entries that are actually in use.
+ * "capacity", and the number of allocated entries that are actually in use
  * "used". */
 typedef struct {
   size_t used;
   size_t capacity;
   uint8_t *instructions;
+  ValueArray constants;
 } Chunk;
 
 /*
@@ -52,5 +53,14 @@ void write_chunk(Chunk *chunk, uint8_t byte);
  * @return void
  */
 void free_chunk(Chunk *chunk);
+/*
+ * @brief Push a new constant to a chunk's values array
+ * This function will append a new constant to the chunk's values array.
+ *
+ * @param chunk A pointer to the chunk to add the constant to
+ * @param constant The constant to add to the chunk
+ * @return the index of the values array where the constant was added
+ */
+int push_constant_to_chunk(Chunk *chunk, Value constant);
 
 #endif
