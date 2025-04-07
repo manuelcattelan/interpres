@@ -43,5 +43,14 @@ void init_chunk(Chunk *chunk);
  * @return void
  */
 void write_chunk(Chunk *chunk, uint8_t byte);
+/*
+ * @brief Free the chunk's instructions array.
+ * This function will free the chunk's instructions array and re-initialize the
+ * chunk to an empty state by calling init_chunk.
+ *
+ * @param chunk A pointer to the chunk to free
+ * @return void
+ */
+void free_chunk(Chunk *chunk);
 
 #endif
