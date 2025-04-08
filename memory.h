@@ -4,11 +4,11 @@
 #include "common.h"
 
 /* Here we define a heuristic value for the growth operation of a dynamic array.
- * A value of 8 means that 8 will be the minimum number of array values that we
- * will allocate space for when we need to grow the array.
+ * A value of 8 means that 8 will be the minimum number of values that we will
+ * allocate space for when we need to grow the array.
  */
 #define GROWTH_THRESHOLD 8
-/* Here we define the multiplier we will use to extend the capacity of dynamic
+/* Here we define the multiplier we will use to extend the capacity of a dynamic
  * array when we need to grow it. A value of 2 means that we will double the
  * size of the array every time we need to grow it. */
 #define GROWTH_FACTOR 2

@@ -20,8 +20,9 @@ typedef struct {
 
 /*
  * @brief Initialize a new array of values.
- * The values array starts completely empty, we do not even allocate space for a
- * raw array during initialization.
+ * We set a starting value of 0 for "used" and "capacity", while the values
+ * array start completely empty, we do not even allocate space for a raw array
+ * during initialization.
  *
  * @param array A pointer to the array to initialize
  * @return void
@@ -32,7 +33,7 @@ void init_value_array(ValueArray *array);
  * If the values array still has free space left, this function will simply push
  * the new value to the values array. Otherwise, it will allocate additional
  * space for the new value by copying the old values array to a new array,
- * doubling it's size and finally appending the new value to the new array.
+ * growing it's size and finally appending the new value to the new array.
  *
  * @param array A pointer to the array to append the new value to
  * @param value The value to append to the array
