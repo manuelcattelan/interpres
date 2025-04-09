@@ -9,6 +9,11 @@
  * subtracting, looking up a variable, etc... */
 typedef enum {
   OP_RETURN,
+  OP_NEGATE,
+  OP_ADD,
+  OP_SUBTRACT,
+  OP_MULTIPLY,
+  OP_DIVIDE,
   OP_CONSTANT,
 } OpCode;
 /* Here is the standard implementation of a dynamic array in C. Besides the
