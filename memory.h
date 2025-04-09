@@ -49,7 +49,17 @@
  */
 #define FREE_ARRAY(array_type, array, old_capacity)                            \
   reallocate_array(array, sizeof(array_type) * old_capacity, 0)
-
+/*
+ * @brief Reallocate a dynamic array to a new size.
+ * This function will allocate a new dynamic array of the given size and copy
+ * the old array to the new one. If the new size is 0, it will free the old
+ * array and return NULL.
+ *
+ * @param array The dynamic array to reallocate
+ * @param old_capacity The old capacity of the dynamic array
+ * @param new_capacity The new capacity of the dynamic array
+ * @return The reallocated dynamic array
+ */
 void *reallocate_array(void *array, size_t old_capacity, size_t new_capacity);
 
 #endif

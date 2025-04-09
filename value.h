@@ -49,5 +49,15 @@ void write_value_array(ValueArray *array, Value value);
  * @return void
  */
 void free_value_array(ValueArray *array);
+/*
+ * @brief Print a value to the standard output for debugging purposes.
+ * This function will print the value given as parameter to the standard output
+ * and it is primarily used for debugging values stored in a chunk's
+ * instructions value array.
+ *
+ * @param value The value to print
+ * @return void
+ */
+void print_value(Value value);
 
 #endif

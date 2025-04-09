@@ -58,7 +58,7 @@ void write_chunk(Chunk *chunk, uint8_t byte, size_t line_number);
  */
 void free_chunk(Chunk *chunk);
 /*
- * @brief Push a new constant to a chunk's values array
+ * @brief Push a new constant to a chunk's values array.
  * This function will append a new constant to the chunk's values array.
  *
  * @param chunk A pointer to the chunk to add the constant to
