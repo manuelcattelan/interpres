@@ -12,12 +12,12 @@ void init_chunk(Chunk *chunk) {
 
 void write_chunk(Chunk *chunk, uint8_t instruction, size_t line_number) {
   if (chunk->capacity < chunk->used + 1) {
-    size_t old_capacity = chunk->capacity;
-    chunk->capacity = COMPUTE_ARRAY_CAPACITY(old_capacity);
-    chunk->instructions =
-        GROW_ARRAY(uint8_t, chunk->instructions, old_capacity, chunk->capacity);
+    size_t current_capacity = chunk->capacity;
+    chunk->capacity = COMPUTE_ARRAY_CAPACITY(current_capacity);
+    chunk->instructions = GROW_ARRAY(uint8_t, chunk->instructions,
+                                     current_capacity, chunk->capacity);
     chunk->instruction_lines = GROW_ARRAY(size_t, chunk->instruction_lines,
-                                          old_capacity, chunk->capacity);
+                                          current_capacity, chunk->capacity);
   }
   chunk->instructions[chunk->used] = instruction;
   chunk->instruction_lines[chunk->used] = line_number;

@@ -6,11 +6,10 @@
 
 #define STACK_MAX_SIZE 256
 
-/* This is our language's definition of a virtual machine. It is a simple object
- * that holds both a chunk and a pointer to the chunk's instruction that we are
- * currently executing. It also holds the stack of values that we need for the
- * instructions we're constructing and a pointer that points just past the last
- * element of the stack itself. */
+/* This is our language's definition of a virtual machine. It holds a couple of
+ * things: a chunk, a pointer to the chunk's next instruction to execute, the
+ * stack of values that we need for the instructions we're constructing and a
+ * pointer that points just past the last element of the stack itself. */
 typedef struct {
   Chunk *chunk;
   uint8_t *instruction_pointer;
@@ -31,14 +30,14 @@ void init_vm();
 void free_vm();
 
 /*
- * @brief Interpret a chunk of instructions.
- * This function will execute the instructions in the chunk and return the
+ * @brief Interpret a set of instructions.
+ * This function will compile the given set of instructions and return the
  * result of the interpretation.
  *
- * @param chunk A pointer to the chunk to interpret
+ * @param input A pointer to the input set of instructions to interpret
  * @return InterpretationResult The result of the interpretation
  */
-InterpretationResult interpret_chunk(Chunk *chunk);
+InterpretationResult interpret(const char *input);
 /*
  * @brief Push a value onto the stack.
  * This function will push a value onto the stack of the virtual machine.
@@ -46,13 +45,14 @@ InterpretationResult interpret_chunk(Chunk *chunk);
  * @param value The value to push onto the stack
  * @return void
  */
-void push(Value value);
+void push_onto_stack(Value value);
 /*
  * @brief Pop a value from the stack.
- * This function will pop a value from the stack of the virtual machine.
+ * This function will pop a value from the stack of the virtual machine and
+ * return it to the caller.
  *
  * @return Value The value popped from the stack
  */
-Value pop();
+Value pop_from_stack();
 
 #endif

@@ -4,7 +4,7 @@
 #include "chunk.h"
 
 /*
- * @brief Disassemble a chunk of instructions.
+ * @brief Disassemble a chunk's instructions array.
  * This function will print the disassembled instructions of a chunk to the
  * standard output together with the chunk's name.
  *
@@ -20,7 +20,7 @@ void disassemble_chunk(Chunk *chunk, const char *chunk_name);
  *
  * @param chunk A pointer to the chunk to disassemble
  * @param instruction_offset The offset of the instruction to disassemble
- * @return int The new instruction offset
+ * @return int The offset of the next instruction to disassemble
  */
 int disassemble_instruction(Chunk *chunk, int instruction_offset);
 

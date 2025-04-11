@@ -10,10 +10,10 @@ void init_value_array(ValueArray *array) {
 
 void write_value_array(ValueArray *array, Value value) {
   if (array->capacity < array->used + 1) {
-    size_t old_capacity = array->capacity;
-    array->capacity = COMPUTE_ARRAY_CAPACITY(old_capacity);
+    size_t current_capacity = array->capacity;
+    array->capacity = COMPUTE_ARRAY_CAPACITY(current_capacity);
     array->values =
-        GROW_ARRAY(Value, array->values, old_capacity, array->capacity);
+        GROW_ARRAY(Value, array->values, current_capacity, array->capacity);
   }
   array->values[array->used] = value;
   array->used++;
