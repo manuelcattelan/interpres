@@ -2,19 +2,20 @@
 #define interpres_vm_h
 
 #include "chunk.h"
-#include "value.h"
+#include "constant.h"
+#include "scanner.h"
 
 #define STACK_MAX_SIZE 256
 
 /* This is our language's definition of a virtual machine. It holds a couple of
  * things: a chunk, a pointer to the chunk's next instruction to execute, the
- * stack of values that we need for the instructions we're constructing and a
+ * stack of constants that we need for the instructions we're evaluating and a
  * pointer that points just past the last element of the stack itself. */
 typedef struct {
   Chunk *chunk;
   uint8_t *instruction_pointer;
-  Value stack[STACK_MAX_SIZE];
-  Value *stack_top;
+  Constant stack[STACK_MAX_SIZE];
+  Constant *stack_pointer;
 } VirtualMachine;
 
 /* This enum defines the possible results of interpreting a chunk. It is used to
@@ -26,33 +27,44 @@ typedef enum {
   INTERPRETATION_RUNTIME_ERROR,
 } InterpretationResult;
 
-void init_vm();
-void free_vm();
-
 /*
- * @brief Interpret a set of instructions.
- * This function will compile the given set of instructions and return the
- * result of the interpretation.
+ * @brief Initialize the virtual machine.
+ * This function will set the stack pointer to the beginning of the stack so
+ * that it can be used to store constants.
  *
- * @param input A pointer to the input set of instructions to interpret
- * @return InterpretationResult The result of the interpretation
- */
-InterpretationResult interpret(const char *input);
-/*
- * @brief Push a value onto the stack.
- * This function will push a value onto the stack of the virtual machine.
- *
- * @param value The value to push onto the stack
+ * @param vm A pointer to the virtual machine to initialize
  * @return void
  */
-void push_onto_stack(Value value);
+void init_vm(VirtualMachine *vm);
+void free_vm(VirtualMachine *vm);
+
 /*
- * @brief Pop a value from the stack.
- * This function will pop a value from the stack of the virtual machine and
+ * @brief Scan and compile input.
+ * This function will scan the input, producing tokens, and compile them into
+ * bytecode that can be interpreted by our virtual machine.
+ *
+ * @param vm A pointer to the virtual machine
+ * @param input The input to scan and compile
+ * @return The result of the interpretation
+ */
+InterpretationResult interpret_input(VirtualMachine *vm, const char *input);
+/*
+ * @brief Push a constant onto the stack.
+ * This function will push a constant onto the stack of the virtual machine.
+ *
+ * @param vm A pointer to the virtual machine to which to push the constant
+ * @param constant The constant to push onto the stack
+ * @return void
+ */
+void push_onto_stack(VirtualMachine *vm, Constant constant);
+/*
+ * @brief Pop a constant from the stack.
+ * This function will pop a constant from the stack of the virtual machine and
  * return it to the caller.
  *
- * @return Value The value popped from the stack
+ * @param vm A pointer to the virtual machine from which to pop the constant
+ * @return The constant popped from the stack
  */
-Value pop_from_stack();
+Constant pop_from_stack(VirtualMachine *vm);
 
 #endif

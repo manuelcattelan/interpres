@@ -1,94 +1,98 @@
 #include "vm.h"
+#include "chunk.h"
 #include "compiler.h"
-#include "debug.h"
+#include "constant.h"
+#include "parser.h"
+#include "scanner.h"
+#include <stdbool.h>
 #include <stdio.h>
 
-/* This is a global variable definition that avoids the chore of passing around
- * a pointer to the virtual machine instance to all of the functions inside this
- * module. Of course, everything bad that one can hear about global variables
- * still stands with this implementation. */
-VirtualMachine vm;
-
-/*
- * @brief Initialize the stack of the virtual machine.
- * This function will initialize the stack of the virtual machine to its initial
- * state by making the pointer of the next element to push onto the stack point
- * to the beginning of the stack.
- *
- * @return void
- */
-static void init_stack() { vm.stack_top = vm.stack; }
-
-void init_vm() { init_stack(); }
-void free_vm() {}
-
-void push_onto_stack(Value value) {
-  *vm.stack_top = value;
-  vm.stack_top++;
+static void reset_vm_stack(VirtualMachine *vm) {
+  vm->stack_pointer = vm->stack;
 }
 
-Value pop_from_stack() {
-  vm.stack_top--;
-  return *vm.stack_top;
+void init_vm(VirtualMachine *vm) { reset_vm_stack(vm); }
+
+void free_vm(VirtualMachine *vm) {}
+
+static uint8_t read_instruction(VirtualMachine *vm) {
+  return *vm->instruction_pointer++;
 }
 
-static InterpretationResult run() {
-#define READ_BYTE() (*vm.instruction_pointer++)
-#define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
-#define BINARY_OP(op)                                                          \
+static Constant read_instruction_constant(VirtualMachine *vm) {
+  return vm->chunk->constants.values[read_instruction(vm)];
+}
+
+static InterpretationResult run_vm_instruction_set(VirtualMachine *vm) {
+#define BINARY_OPERATION(vm, operator)                                         \
   do {                                                                         \
-    double second_operand = pop_from_stack();                                  \
-    double first_operand = pop_from_stack();                                   \
-    push_onto_stack(first_operand op second_operand);                          \
+    Constant second_operand = pop_from_stack(vm);                              \
+    Constant first_operand = pop_from_stack(vm);                               \
+    push_onto_stack(vm, first_operand operator second_operand);                \
   } while (false)
+
   for (;;) {
-#ifdef DEBUG_TRACE_EXECUTION
-    printf("          ");
-    for (Value *stack_slot = vm.stack; stack_slot < vm.stack_top;
-         stack_slot++) {
-      printf("[ ");
-      print_value(*stack_slot);
-      printf(" ]");
-    }
-    printf("\n");
-    disassemble_instruction(
-        vm.chunk, (int)(vm.instruction_pointer - vm.chunk->instructions));
-#endif
     uint8_t instruction;
-    switch (instruction = READ_BYTE()) {
+    switch (instruction = read_instruction(vm)) {
     case OP_CONSTANT: {
-      Value constant = READ_CONSTANT();
-      push_onto_stack(constant);
+      Constant instruction_constant = read_instruction_constant(vm);
       break;
     }
-    case OP_NEGATE:
-      push_onto_stack(-pop_from_stack());
+    case OP_ADD: {
+      BINARY_OPERATION(vm, +);
       break;
-    case OP_ADD:
-      BINARY_OP(+);
+    }
+    case OP_SUBTRACT: {
+      BINARY_OPERATION(vm, -);
       break;
-    case OP_SUBTRACT:
-      BINARY_OP(-);
+    }
+    case OP_MULTIPLY: {
+      BINARY_OPERATION(vm, *);
       break;
-    case OP_MULTIPLY:
-      BINARY_OP(*);
+    }
+    case OP_DIVIDE: {
+      BINARY_OPERATION(vm, /);
       break;
-    case OP_DIVIDE:
-      BINARY_OP(/);
+    }
+    case OP_NEGATE: {
+      push_onto_stack(vm, -pop_from_stack(vm));
       break;
+    }
     case OP_RETURN: {
-      print_value(pop_from_stack());
-      printf("\n");
       return INTERPRETATION_OK;
     }
     }
   }
-#undef READ_BYTE
-#undef READ_CONSTANT
-#undef BINARY_OP
+#undef BINARY_OPERATION
 }
 
-InterpretationResult interpret(const char *input) {
-  compile(input);
+InterpretationResult interpret_input(VirtualMachine *vm, const char *input) {
+  printf("inside interpret");
+
+  Chunk chunk;
+  init_chunk(&chunk);
+  printf("inited chunk");
+  Scanner scanner;
+  init_scanner(&scanner, NULL, 0);
+  printf("inited scanner");
+  Parser parser;
+
+  if (!compile_input(&parser, &scanner, &chunk, input)) {
+    free_chunk(&chunk);
+    return INTERPRETATION_COMPILE_ERROR;
+  }
+
+  vm->chunk = &chunk;
+  vm->instruction_pointer = vm->chunk->instructions.values;
+  InterpretationResult run_result = run_vm_instruction_set(vm);
+
+  free_chunk(&chunk);
   return INTERPRETATION_OK;
 }
+
+void push_onto_stack(VirtualMachine *vm, Constant constant) {
+  *vm->stack_pointer = constant;
+  vm->stack_pointer++;
+}
+
+Constant pop_from_stack(VirtualMachine *vm) { return *(--vm->stack_pointer); }

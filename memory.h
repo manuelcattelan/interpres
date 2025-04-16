@@ -1,7 +1,7 @@
 #ifndef interpres_memory_h
 #define interpres_memory_h
 
-#include "common.h"
+#include <stdlib.h>
 
 /* Here we define a heuristic value for the growth operation of a dynamic array.
  * A value of 8 means that 8 will be the minimum number of values that we will

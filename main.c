@@ -1,52 +1,43 @@
 #include "vm.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-static void repl() {
-  char input[1024];
+#define INPUT_MAX_LENGTH 1024
+
+static void repl(VirtualMachine *vm) {
+  char input[INPUT_MAX_LENGTH];
   for (;;) {
-    printf("> ");
-    if (!fgets(input, sizeof(input), stdin)) {
-      printf("\n");
+    if (!fgets(input, sizeof(input), stdin))
       break;
-    }
-    interpret(input);
+    interpret_input(vm, input);
   }
 }
 
-static char *read_file(const char *file_path) {
-  FILE *file = fopen(file_path, "rb");
-  if (file == NULL) {
-    fprintf(stderr, "Could not open file \"%s\".\n", file_path);
+static char *read_input(const char *input_path) {
+  FILE *input = fopen(input_path, "rb");
+  if (input == NULL)
     exit(EXIT_FAILURE);
-  }
 
-  fseek(file, 0L, SEEK_END);
-  size_t file_size = ftell(file);
-  rewind(file);
+  fseek(input, 0L, SEEK_END);
+  size_t input_size = ftell(input);
+  rewind(input);
 
-  char *file_buffer = (char *)malloc(file_size + 1);
-  if (file_buffer == NULL) {
-    fprintf(stderr, "Not enough memory to read file \"%s\".\n", file_path);
+  char *input_buffer = (char *)malloc(input_size + 1);
+  if (input_buffer == NULL)
     exit(EXIT_FAILURE);
-  }
 
-  size_t file_bytes_read = fread(file_buffer, sizeof(char), file_size, file);
-  if (file_bytes_read < file_size) {
-    fprintf(stderr, "Could not read file \"%s\".\n", file_path);
+  size_t input_bytes = fread(input_buffer, sizeof(char), input_size, input);
+  if (input_bytes != input_size)
     exit(EXIT_FAILURE);
-  }
+  input_buffer[input_bytes] = '\0';
 
-  file_buffer[file_bytes_read] = '\0';
-
-  fclose(file);
-  return file_buffer;
+  fclose(input);
+  return input_buffer;
 }
 
-static void run_file(const char *file_path) {
-  char *input = read_file(file_path);
-  InterpretationResult interpretation_result = interpret(input);
+static void run_input(VirtualMachine *vm, const char *input_path) {
+  char *input = read_input(input_path);
+  InterpretationResult interpretation_result = interpret_input(vm, input);
   free(input);
 
   if (interpretation_result == INTERPRETATION_COMPILE_ERROR ||
@@ -55,15 +46,17 @@ static void run_file(const char *file_path) {
 }
 
 int main(int argc, char *argv[]) {
-  init_vm();
+  VirtualMachine vm;
+  init_vm(&vm);
+
   if (argc == 1) {
-    repl();
+    repl(&vm);
   } else if (argc == 2) {
-    run_file(argv[1]);
+    run_input(&vm, argv[1]);
   } else {
-    fprintf(stderr, "Usage: interpres [file_path]\n");
     exit(EXIT_FAILURE);
   }
-  free_vm();
+
+  free_vm(&vm);
   return EXIT_SUCCESS;
 }
