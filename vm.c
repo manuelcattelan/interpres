@@ -15,7 +15,6 @@ static InterpretationResult run_input_compiled(VirtualMachine *vm) {
     Constant first_operand = pop_from_stack(vm);                               \
     push_onto_stack(vm, first_operand operator second_operand);                \
   } while (false)
-
   for (;;) {
     uint8_t instruction;
     switch (instruction = READ_INSTRUCTION(vm)) {
@@ -56,19 +55,16 @@ void init_vm(VirtualMachine *vm) { init_stack(vm); }
 void free_vm(VirtualMachine *vm) {}
 
 InterpretationResult interpret_input(VirtualMachine *vm, const char *input) {
-  Chunk chunk;
-  init_chunk(&chunk);
-
-  if (!compile_input(input, &chunk)) {
-    free_chunk(&chunk);
+  Chunk compilation_chunk;
+  init_chunk(&compilation_chunk);
+  if (!compile_input(input, &compilation_chunk)) {
+    free_chunk(&compilation_chunk);
     return INTERPRETATION_COMPILE_ERROR;
   }
-
-  vm->chunk = &chunk;
+  vm->chunk = &compilation_chunk;
   vm->instruction_pointer = vm->chunk->instructions.values;
   InterpretationResult interpretation_result = run_input_compiled(vm);
-
-  free_chunk(&chunk);
+  free_chunk(&compilation_chunk);
   return interpretation_result;
 }
 

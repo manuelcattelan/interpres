@@ -17,7 +17,6 @@ typedef struct {
   size_t *line_numbers;
   uint8_t *values;
 } InstructionsArray;
-
 /*
  * @brief Initialize a new array of instructions.
  * We set a starting value of 0 for "used" and "capacity", while the

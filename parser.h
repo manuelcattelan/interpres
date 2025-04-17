@@ -1,7 +1,9 @@
 #ifndef interpres_parser_h
 #define interpres_parser_h
 
+#include "chunk.h"
 #include "scanner.h"
+#include "token.h"
 
 /* Our parser keeps asking the scanner for the next token and stores it for
  * later use. Before doing that, it takes the "old" current token and stashes
@@ -13,7 +15,6 @@ typedef struct {
   bool is_error;
   bool is_panic;
 } Parser;
-
 /* The definition of predecence is intrinsic in the definition of the below
  * enum, since C implicitly gives successively larger numbers for enum
  * properties. */
@@ -30,13 +31,58 @@ typedef enum {
   PRECEDENCE_CALL,
   PRECEDENCE_PRIMARY
 } ParsePrecedence;
-
-typedef void (*ParseFunction)();
-
+typedef void (*ParseFunction)(Parser *parser, Scanner *scanner,
+                              Chunk *currently_compiling_chunk);
 typedef struct {
   ParseFunction prefix_function;
   ParseFunction infix_function;
   ParsePrecedence precedence;
 } ParseRule;
+/*
+ * @brief Initialize the parser.
+ * This function will set the parser's "is_error" and "is_panic" fields to
+ * false, resetting in fact the parser to a non-error state.
+ *
+ * @param parser A pointer to the parser to initialize
+ * @return void
+ */
+void init_parser(Parser *parser);
+void advance_parser(Parser *parser, Scanner *scanner);
+void advance_and_validate_parser(Parser *parser, Scanner *scanner,
+                                 TokenType token_type,
+                                 const char *error_message);
+/*
+ * @brief Print error message to stderr.
+ * This function will print the error message to stderr, along with the line
+ * number and the token that caused the error. It will also set the parser's
+ * "is_error" and "is_panic" fields to true, indicating that an error has
+ * occurred.
+ *
+ * @param parser A pointer to the parser to print the error message for
+ * @param token A pointer to the token that caused the error
+ * @param error_message The error message to print
+ * @return void
+ */
+void parser_error_at(Parser *parser, Token *token, const char *error_message);
+/*
+ * @brief Print error message to stderr.
+ * This function is a wrapper around parser_error_at, which will print the error
+ * message for the previously scanned token.
+ *
+ * @param parser A pointer to the parser to print the error message for
+ * @param error_message The error message to print
+ * @return void
+ */
+void parser_error_at_previous(Parser *parser, const char *error_message);
+/*
+ * @brief Print error message to stderr.
+ * This function is a wrapper around parser_error_at, which will print the error
+ * message for the currently scanned token.
+ *
+ * @param parser A pointer to the parser to print the error message for
+ * @param error_message The error message to print
+ * @return void
+ */
+void parser_error_at_current(Parser *parser, const char *error_message);
 
 #endif

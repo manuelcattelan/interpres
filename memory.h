@@ -11,7 +11,6 @@
  * array when we need to grow it. A value of 2 means that we will double the
  * size of the array every time we need to grow it. */
 #define GROWTH_FACTOR 2
-
 /*
  * @brief Compute the new capacity of a dynamic array before growing it.
  * This macro will return the capacity of the dynamic array that has to be
@@ -61,4 +60,5 @@
  */
 void *reallocate_array(void *current_array, size_t current_capacity,
                        size_t new_capacity);
+
 #endif

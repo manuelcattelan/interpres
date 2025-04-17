@@ -16,7 +16,6 @@ typedef enum {
   OP_DIVIDE,
   OP_NEGATE,
 } OpCode;
-
 /* A chunk is nothing more than sequences of bytecode instructions and the
  * constants that make up those instructions; notice that both are implemented
  * as dynamic arrays since they need to grow and shrink in size at runtime. */
@@ -24,7 +23,6 @@ typedef struct {
   InstructionsArray instructions;
   ConstantsArray constants;
 } Chunk;
-
 /*
  * @brief Initialize a new chunk.
  * We set a starting value of 0 for "used" and "capacity", while the chunk's

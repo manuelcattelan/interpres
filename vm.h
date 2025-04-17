@@ -4,7 +4,6 @@
 #include "chunk.h"
 
 #define STACK_MAX_SIZE 256
-
 /* This is our language's definition of a virtual machine. It holds a couple of
  * things: a chunk, a pointer to the chunk's next instruction to execute, the
  * stack of constants that we need for the instructions we're evaluating and a
@@ -15,7 +14,6 @@ typedef struct {
   Constant stack[STACK_MAX_SIZE];
   Constant *stack_pointer;
 } VirtualMachine;
-
 /* This enum defines the possible results of a chunk's interpretation. It is
  * used to indicate whether the interpretation was successful or if there was an
  * error during compilation or execution. */
@@ -24,7 +22,6 @@ typedef enum {
   INTERPRETATION_COMPILE_ERROR,
   INTERPRETATION_RUNTIME_ERROR
 } InterpretationResult;
-
 /*
  * @brief Initialize the virtual machine.
  * This function will set the stack pointer to the beginning of the stack so

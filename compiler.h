@@ -10,9 +10,10 @@
  * machine.
  *
  * @param input The input set of instructions to compile
- * @param chunk A pointer to the chunk that will hold the compiled bytecode
+ * @param compilation_chunk A pointer to the chunk that will hold the compiled
+ * bytecode
  * @return Whether the compilation was successful or not
  */
-bool compile_input(const char *input, Chunk *chunk);
+bool compile_input(const char *input, Chunk *compilation_chunk);
 
 #endif

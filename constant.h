@@ -7,7 +7,6 @@
  * C, allowing us to change that representation without changing the rest of the
  * existing code that passes around variables of this type. */
 typedef double Constant;
-
 /* A series of constants is defined as a dynamic array which holds two counters:
  * "capacity" and "used", which represent respectively the number of elements in
  * the array and the number of elements that are actually in use. In this case,
@@ -18,7 +17,6 @@ typedef struct {
   size_t capacity;
   Constant *values;
 } ConstantsArray;
-
 /*
  * @brief Initialize a new array of constants.
  * We set a starting value of 0 for "used" and "capacity", while the constants
