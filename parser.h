@@ -31,8 +31,18 @@ typedef enum {
   PRECEDENCE_CALL,
   PRECEDENCE_PRIMARY
 } ParsePrecedence;
+/* This type defines the function signature for a parsing function. Each
+ * parsing function will take a pointer to the parser, a pointer to the
+ * scanner and a pointer to the chunk that we're currently compiling. The
+ * function will then parse the token and generate the corresponding bytecode
+ * instruction. */
 typedef void (*ParseFunction)(Parser *parser, Scanner *scanner,
                               Chunk *currently_compiling_chunk);
+/* A parsing rule is made of two parsing functions: a prefix function and an
+ * infix function. The prefix function is used to parse the token when it is
+ * the first token in an expression, while the infix function is used to parse
+ * the token when it is the second token in an expression. The precedence of
+ * the token is also stored in the parsing rule. */
 typedef struct {
   ParseFunction prefix_function;
   ParseFunction infix_function;
@@ -47,7 +57,29 @@ typedef struct {
  * @return void
  */
 void init_parser(Parser *parser);
+/*
+ * @brief Advance the parser to the next token.
+ * This function will advance the parser to the next token by calling the
+ * scanner's scan_token function and storing the result in the parser's
+ * "current_token" field. It also handles any errors that may occur during
+ * scanning.
+ *
+ * @param parser A pointer to the parser to advance
+ * @param scanner A pointer to the scanner that will scan the input
+ * @return void
+ */
 void advance_parser(Parser *parser, Scanner *scanner);
+/*
+ * @brief Advance the parser and validate the current token.
+ * This function will validate the current token to make sure it is of the
+ * expected type and, if it is, advance the parser forward.
+ *
+ * @param parser A pointer to the parser to advance
+ * @param scanner A pointer to the scanner that will scan the input
+ * @param expected_token_type The expected token type
+ * @param error_message The message to return if the token type is incorrect
+ * @return void
+ */
 void advance_and_validate_parser(Parser *parser, Scanner *scanner,
                                  TokenType token_type,
                                  const char *error_message);

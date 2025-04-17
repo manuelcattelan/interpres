@@ -1,9 +1,6 @@
 #include <stdbool.h>
 
-#include "compiler.h"
 #include "parser.h"
-#include "scanner.h"
-#include "token.h"
 
 static void write_byte(Parser *parser, Chunk *currently_compiling_chunk,
                        uint8_t byte_to_write) {
@@ -52,7 +49,7 @@ static void parse_expression_precedence(Parser *parser, Scanner *scanner,
                                         ParsePrecedence precedence);
 static void parse_expression(Parser *parser, Scanner *scanner,
                              Chunk *currently_compiling_chunk);
-static ParseRule *get_parsing_rule(TokenType type);
+static ParseRule *get_parsing_rule(TokenType token_type);
 
 static void make_binary_expression(Parser *parser, Scanner *scanner,
                                    Chunk *currently_compiling_chunk) {
@@ -176,8 +173,8 @@ static void parse_expression(Parser *parser, Scanner *scanner,
                               PRECEDENCE_ASSIGNMENT);
 }
 
-static ParseRule *get_parsing_rule(TokenType type) {
-  return &parsing_rules[type];
+static ParseRule *get_parsing_rule(TokenType token_type) {
+  return &parsing_rules[token_type];
 }
 
 bool compile_input(const char *input, Chunk *compilation_chunk) {

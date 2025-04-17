@@ -12,13 +12,13 @@ void free_constants_array(ConstantsArray *array) {
   init_constants_array(array);
 }
 
-void write_constants_array(ConstantsArray *array, Constant value) {
+void write_constants_array(ConstantsArray *array, Constant constant) {
   if (array->capacity < array->used + 1) {
     size_t current_capacity = array->capacity;
     array->capacity = COMPUTE_ARRAY_CAPACITY(current_capacity);
     array->values =
         GROW_ARRAY(Constant, array->values, current_capacity, array->capacity);
   }
-  array->values[array->used] = value;
+  array->values[array->used] = constant;
   array->used++;
 }
