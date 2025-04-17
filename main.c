@@ -1,11 +1,11 @@
-#include "vm.h"
 #include <stdio.h>
-#include <stdlib.h>
 
-#define INPUT_MAX_LENGTH 1024
+#include "vm.h"
+
+#define MAX_INPUT_LENGTH 1024
 
 static void repl(VirtualMachine *vm) {
-  char input[INPUT_MAX_LENGTH];
+  char input[MAX_INPUT_LENGTH];
   for (;;) {
     if (!fgets(input, sizeof(input), stdin))
       break;
@@ -26,10 +26,11 @@ static char *read_input(const char *input_path) {
   if (input_buffer == NULL)
     exit(EXIT_FAILURE);
 
-  size_t input_bytes = fread(input_buffer, sizeof(char), input_size, input);
-  if (input_bytes != input_size)
+  size_t input_bytes_read =
+      fread(input_buffer, sizeof(char), input_size, input);
+  if (input_bytes_read < input_size)
     exit(EXIT_FAILURE);
-  input_buffer[input_bytes] = '\0';
+  input_buffer[input_bytes_read] = '\0';
 
   fclose(input);
   return input_buffer;

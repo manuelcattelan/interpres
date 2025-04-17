@@ -61,5 +61,4 @@
  */
 void *reallocate_array(void *current_array, size_t current_capacity,
                        size_t new_capacity);
-
 #endif

@@ -2,8 +2,6 @@
 #define interpres_vm_h
 
 #include "chunk.h"
-#include "constant.h"
-#include "scanner.h"
 
 #define STACK_MAX_SIZE 256
 
@@ -18,13 +16,13 @@ typedef struct {
   Constant *stack_pointer;
 } VirtualMachine;
 
-/* This enum defines the possible results of interpreting a chunk. It is used to
- * indicate whether the interpretation was successful or if there was an error
- * during compilation or execution. */
+/* This enum defines the possible results of a chunk's interpretation. It is
+ * used to indicate whether the interpretation was successful or if there was an
+ * error during compilation or execution. */
 typedef enum {
   INTERPRETATION_OK,
   INTERPRETATION_COMPILE_ERROR,
-  INTERPRETATION_RUNTIME_ERROR,
+  INTERPRETATION_RUNTIME_ERROR
 } InterpretationResult;
 
 /*
@@ -37,7 +35,6 @@ typedef enum {
  */
 void init_vm(VirtualMachine *vm);
 void free_vm(VirtualMachine *vm);
-
 /*
  * @brief Scan and compile input.
  * This function will scan the input, producing tokens, and compile them into

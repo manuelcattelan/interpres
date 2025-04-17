@@ -3,21 +3,20 @@
 
 #include "constant.h"
 #include "instruction.h"
-#include <stdint.h>
-#include <stdlib.h>
 
 /* Each instruction in bytecode format has a one-byte operation code that
  * represents what kind of operation we're dealing with from arithmetic
  * operations to looking up variables, returning from somewhere, etc... */
 typedef enum {
   OP_RETURN,
-  OP_NEGATE,
+  OP_CONSTANT,
   OP_ADD,
   OP_SUBTRACT,
   OP_MULTIPLY,
   OP_DIVIDE,
-  OP_CONSTANT,
+  OP_NEGATE,
 } OpCode;
+
 /* A chunk is nothing more than sequences of bytecode instructions and the
  * constants that make up those instructions; notice that both are implemented
  * as dynamic arrays since they need to grow and shrink in size at runtime. */
@@ -73,6 +72,6 @@ void push_instruction_to_chunk(Chunk *chunk, uint8_t instruction,
  * @param constant The new constant to add to the chunk
  * @return The index of the constants array where the constant was added
  */
-int push_constant_to_chunk(Chunk *chunk, Constant constant);
+size_t push_constant_to_chunk(Chunk *chunk, Constant constant);
 
 #endif

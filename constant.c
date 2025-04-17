@@ -1,11 +1,15 @@
 #include "constant.h"
 #include "memory.h"
-#include <stdio.h>
 
 void init_constants_array(ConstantsArray *array) {
   array->used = 0;
   array->capacity = 0;
   array->values = NULL;
+}
+
+void free_constants_array(ConstantsArray *array) {
+  FREE_ARRAY(Constant, array->values, array->capacity);
+  init_constants_array(array);
 }
 
 void write_constants_array(ConstantsArray *array, Constant value) {
@@ -17,9 +21,4 @@ void write_constants_array(ConstantsArray *array, Constant value) {
   }
   array->values[array->used] = value;
   array->used++;
-}
-
-void free_constants_array(ConstantsArray *array) {
-  FREE_ARRAY(Constant, array->values, array->capacity);
-  init_constants_array(array);
 }

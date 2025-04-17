@@ -1,5 +1,4 @@
 #include "chunk.h"
-#include "constant.h"
 
 void init_chunk(Chunk *chunk) {
   init_instructions_array(&chunk->instructions);
@@ -17,7 +16,7 @@ void push_instruction_to_chunk(Chunk *chunk, uint8_t instruction,
   write_instructions_array(&chunk->instructions, instruction, line_number);
 }
 
-int push_constant_to_chunk(Chunk *chunk, Constant value) {
-  write_constants_array(&chunk->constants, value);
+size_t push_constant_to_chunk(Chunk *chunk, Constant constant) {
+  write_constants_array(&chunk->constants, constant);
   return chunk->constants.used - 1;
 }
