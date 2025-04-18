@@ -30,24 +30,24 @@ typedef enum {
   PRECEDENCE_UNARY,
   PRECEDENCE_CALL,
   PRECEDENCE_PRIMARY
-} ParsePrecedence;
+} ParsingPrecedence;
 /* This type defines the function signature for a parsing function. Each
- * parsing function will take a pointer to the parser, a pointer to the
+ * parsing function takes a pointer to the parser, a pointer to the
  * scanner and a pointer to the chunk that we're currently compiling. The
- * function will then parse the token and generate the corresponding bytecode
+ * function then parses the token and generates the corresponding bytecode
  * instruction. */
-typedef void (*ParseFunction)(Parser *parser, Scanner *scanner,
-                              Chunk *currently_compiling_chunk);
+typedef void (*ParsingFunction)(Parser *parser, Scanner *scanner,
+                                Chunk *currently_compiling_chunk);
 /* A parsing rule is made of two parsing functions: a prefix function and an
  * infix function. The prefix function is used to parse the token when it is
  * the first token in an expression, while the infix function is used to parse
  * the token when it is the second token in an expression. The precedence of
  * the token is also stored in the parsing rule. */
 typedef struct {
-  ParseFunction prefix_function;
-  ParseFunction infix_function;
-  ParsePrecedence precedence;
-} ParseRule;
+  ParsingFunction prefix_function;
+  ParsingFunction infix_function;
+  ParsingPrecedence parsing_precedence;
+} ParsingRule;
 /*
  * @brief Initialize the parser.
  * This function will set the parser's "is_error" and "is_panic" fields to
@@ -80,9 +80,9 @@ void advance_parser(Parser *parser, Scanner *scanner);
  * @param error_message The message to return if the token type is incorrect
  * @return void
  */
-void advance_and_validate_parser(Parser *parser, Scanner *scanner,
-                                 TokenType token_type,
-                                 const char *error_message);
+void advance_parser_and_validate_token(Parser *parser, Scanner *scanner,
+                                       TokenType token_type,
+                                       const char *error_message);
 /*
  * @brief Print error message to stderr.
  * This function will print the error message to stderr, along with the line
@@ -116,5 +116,41 @@ void parser_error_at_previous(Parser *parser, const char *error_message);
  * @return void
  */
 void parser_error_at_current(Parser *parser, const char *error_message);
+/*
+ * @brief Parse an expression with a given precedence.
+ * This function handles the logic for actually parsing an expression by
+ * considering the precedence of the tokens being considered and executing the
+ * correct parsing functions based on their types (infix or prefix).
+ *
+ * @param parser A pointer to the parser to advance
+ * @param scanner A pointer to the scanner that will scan the input
+ * @param parsing_precedence The precedence to consider for the expression to
+ * parse
+ */
+void parse_expression_precedence(Parser *parser, Scanner *scanner,
+                                 Chunk *currently_compiling_chunk,
+                                 ParsingPrecedence parsing_precedence);
+/*
+ * @brief Parse an expression.
+ * This function will parse an expression by calling the appropriate parsing
+ * function based on the current token type, while correctly handling precedence
+ * between tokens of different types.
+ *
+ * @param parser A pointer to the parser to advance
+ * @param scanner A pointer to the scanner that will scan the input
+ * @currently_compiling_chunk A pointer to the chunk that is being compiled
+ * @return void
+ */
+void parse_expression(Parser *parser, Scanner *scanner,
+                      Chunk *currently_compiling_chunk);
+/*
+ * @brief Map a token type to its parsing rule.
+ * This function will map a given token type to its corresponding set of parsing
+ * rules, both for infix and prefix expressions.
+ *
+ * @param token_type The token type to map
+ * @return A pointer to the set of parsing rule for the given token type
+ */
+ParsingRule *get_parsing_rule(TokenType token_type);
 
 #endif

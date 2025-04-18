@@ -73,11 +73,11 @@ static void skip_comments(Scanner *scanner) {
   }
 }
 
-static TokenType make_identifier_token_remaining(Scanner *scanner,
-                                                 size_t remaining_start,
-                                                 size_t remaining_length,
-                                                 const char *remaining,
-                                                 TokenType token_type) {
+static TokenType match_identifier_token_type(Scanner *scanner,
+                                             size_t remaining_start,
+                                             size_t remaining_length,
+                                             const char *remaining,
+                                             TokenType token_type) {
   if (scanner->lexeme_current - scanner->lexeme_start ==
           remaining_start + remaining_length &&
       memcmp(scanner->lexeme_start + remaining_start, remaining,
@@ -90,52 +90,49 @@ static TokenType make_identifier_token_remaining(Scanner *scanner,
 static TokenType make_identifier_token_type(Scanner *scanner) {
   switch (scanner->lexeme_start[0]) {
   case 'a':
-    return make_identifier_token_remaining(scanner, 1, 2, "nd", TOKEN_AND);
+    return match_identifier_token_type(scanner, 1, 2, "nd", TOKEN_AND);
   case 'c':
-    return make_identifier_token_remaining(scanner, 1, 4, "lass", TOKEN_CLASS);
+    return match_identifier_token_type(scanner, 1, 4, "lass", TOKEN_CLASS);
   case 'e':
-    return make_identifier_token_remaining(scanner, 1, 3, "lse", TOKEN_ELSE);
+    return match_identifier_token_type(scanner, 1, 3, "lse", TOKEN_ELSE);
   case 'f':
     if (scanner->lexeme_current - scanner->lexeme_start > 1) {
       switch (scanner->lexeme_start[1]) {
       case 'a':
-        return make_identifier_token_remaining(scanner, 2, 3, "lse",
-                                               TOKEN_FALSE);
+        return match_identifier_token_type(scanner, 2, 3, "lse", TOKEN_FALSE);
       case 'o':
-        return make_identifier_token_remaining(scanner, 2, 1, "r", TOKEN_FOR);
+        return match_identifier_token_type(scanner, 2, 1, "r", TOKEN_FOR);
       case 'u':
-        return make_identifier_token_remaining(scanner, 2, 1, "n",
-                                               TOKEN_FUNCTION);
+        return match_identifier_token_type(scanner, 2, 1, "n", TOKEN_FUNCTION);
       }
     }
     break;
   case 'i':
-    return make_identifier_token_remaining(scanner, 1, 1, "f", TOKEN_IF);
+    return match_identifier_token_type(scanner, 1, 1, "f", TOKEN_IF);
   case 'n':
-    return make_identifier_token_remaining(scanner, 1, 2, "il", TOKEN_NIL);
+    return match_identifier_token_type(scanner, 1, 2, "il", TOKEN_NIL);
   case 'o':
-    return make_identifier_token_remaining(scanner, 1, 1, "r", TOKEN_OR);
+    return match_identifier_token_type(scanner, 1, 1, "r", TOKEN_OR);
   case 'p':
-    return make_identifier_token_remaining(scanner, 1, 4, "rint", TOKEN_PRINT);
+    return match_identifier_token_type(scanner, 1, 4, "rint", TOKEN_PRINT);
   case 'r':
-    return make_identifier_token_remaining(scanner, 1, 5, "eturn",
-                                           TOKEN_RETURN);
+    return match_identifier_token_type(scanner, 1, 5, "eturn", TOKEN_RETURN);
   case 's':
-    return make_identifier_token_remaining(scanner, 1, 4, "uper", TOKEN_SUPER);
+    return match_identifier_token_type(scanner, 1, 4, "uper", TOKEN_SUPER);
   case 't':
     if (scanner->lexeme_current - scanner->lexeme_start > 1) {
       switch (scanner->lexeme_start[1]) {
       case 'h':
-        return make_identifier_token_remaining(scanner, 2, 2, "is", TOKEN_THIS);
+        return match_identifier_token_type(scanner, 2, 2, "is", TOKEN_THIS);
       case 'r':
-        return make_identifier_token_remaining(scanner, 2, 2, "ue", TOKEN_TRUE);
+        return match_identifier_token_type(scanner, 2, 2, "ue", TOKEN_TRUE);
       }
     }
     break;
   case 'v':
-    return make_identifier_token_remaining(scanner, 1, 2, "ar", TOKEN_VAR);
+    return match_identifier_token_type(scanner, 1, 2, "ar", TOKEN_VAR);
   case 'w':
-    return make_identifier_token_remaining(scanner, 1, 4, "hile", TOKEN_WHILE);
+    return match_identifier_token_type(scanner, 1, 4, "hile", TOKEN_WHILE);
   }
   return TOKEN_IDENTIFIER;
 }
